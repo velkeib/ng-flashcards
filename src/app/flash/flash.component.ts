@@ -19,6 +19,7 @@ export class FlashComponent {
   @Output() onDelete = new EventEmitter();
   @Output() onEdit = new EventEmitter();
   @Output() onRememberedChange = new EventEmitter();
+  
   constructor() { }
 
   toggleCard() {

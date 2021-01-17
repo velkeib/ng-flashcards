@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { IFlash } from './flash.model';
+import { NgForm } from '@angular/forms';
+
 
 function getRandomNumber() {
   return Math.floor(Math.random() * 10000);
@@ -31,21 +33,62 @@ export class AppComponent {
     id: getRandomNumber(),
   }];
 
+
+  @ViewChild('flashForm', { static: false }) flashForm: NgForm;
+
   editing = false;
   editingId: number;
+
+  flash = {
+    question: '',
+    answer: ''
+  };
+
+  handleEdit(id: number): void {
+    this.editing = true;
+    this.editingId = id;
+    const flash = this.flashs.find(flash => flash.id === id);
+    this.flash.question = flash.question;
+    this.flash.answer = flash.answer;
+  }
+  handleUpdate() {
+    const flash = this.flashs.find(flash => flash.id === this.editingId);
+    flash.question = this.flash.question;
+    flash.answer = this.flash.answer;
+    this.handleCancel();
+  }
+  handleCancel() {
+    this.editing = false;
+    this.editingId = undefined;
+    this.handleClear();
+  }
+
+  handleSubmit(): void {
+    this.flashs.push({
+      id: getRandomNumber(),
+      question: this.flash.question,
+      answer: this.flash.answer,
+      show: false,
+
+    })
+
+    this.handleClear();
+  }
+
+  handleClear() {
+    this.flash = {
+      question: '',
+      answer: '',
+    };
+    this.flashForm.reset();
+  }
 
   handleDelete(id: number) {
     const flashId = this.flashs.findIndex(flash => flash.id === id);
     this.flashs.splice(flashId, 1)
   }
 
-  handleEdit(id: number) {
-    this.editing = true;
-    this.editingId = id;
-    // TODO: We will add editing logic after adding the form
-  }
-
-  handleRememeberedChange({ id, flag }) {
+  handleRememberedChange({ id, flag }) {
     const flash = this.flashs.find(flash => flash.id === id);
     flash.remembered = flag;
   }
